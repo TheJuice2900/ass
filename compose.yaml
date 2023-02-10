@@ -1,0 +1,35 @@
+# ass Docker compose.yaml v0.2.0
+# authors:
+#  - tycrek <t@tycrek.com> (https://tycrek.com/)
+#  - Zusier <zusier@pm.me> (https://github.com/Zusier)
+#
+# This file is designed to follow the latest Compose specification, defined here: https://github.com/compose-spec/compose-spec/blob/master/spec.md
+# Specific thing(s) to note:
+# - The filename, `compose.yaml`: "The default path for a Compose file is compose.yaml (preferred)" (https://github.com/compose-spec/compose-spec/blob/master/spec.md#compose-file)
+
+services:
+  ass:
+    build: .
+    container_name: ass-docker
+    restart: unless-stopped
+    ports:
+      - "40115:40115"
+    volumes:
+      - ./uploads:/opt/ass/uploads
+      - ./share:/opt/ass/share
+      - type: bind
+        source: ./config.json
+        target: /opt/ass/config.json
+      - type: bind
+        source: ./auth.json
+        target: /opt/ass/auth.json
+      - type: bind
+        source: ./data.json
+        target: /opt/ass/data.json
+    tmpfs: /tmp # temp files such as uploads are stored here
+    tty: true
+    environment:
+      - NODE_ENV=production # for production
+      - ASS_ENV=docker # docker, local, production (not widely used yet)
+      - LOG_LEVEL=debug # debug, info, warn, error
+      - FORCE_COLOR=3 # force color output
